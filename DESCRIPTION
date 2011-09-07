@@ -7,10 +7,10 @@ Description: This package provides an R (S4) interface to "shotgun", the
   (large-scale) parallel coordinate decent solver for lasso and sparse
   logistic regression written in C++.
   .
-  Shotgun is developed at CMU by Aapo Kyrola, Joseph Bradley,
-  Danny Bickson, and Carlos Guestrin.
-License: Apache 2.0
-Depends: R (>= 2.13.0), Rcpp (>= 0.9.6)
+  The shotgun C++ library is developed at CMU by Aapo Kyrola,
+  Joseph Bradley, Danny Bickson, and Carlos Guestrin.
+License: Apache-2
+Depends: R (>= 2.13.0), Rcpp (>= 0.9.6), Matrix
 Imports: Rcpp, methods
 Suggests: testthat (>= 0.5), glmnet (>= 1.7), caret (>= 4.91)
 LinkingTo: Rcpp

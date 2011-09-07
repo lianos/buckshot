@@ -1,3 +1,4 @@
+setClassUnion("ptrOrNULL", c("externalptr", "NULL"))
 ##' Base object for Buckshot classes
 setClass("BuckshotObject", contains="VIRTUAL",
          representation=representation(cache="environment"))
@@ -7,6 +8,12 @@ function(.Object, ..., cache=new.env()) {
   callNextMethod(.Object, cache=cache, ...)
 })
 
+##' Wrapper to the C++ shotgun_data object, which stores the
+##' (sparse) design matrix and labels in a struct.
+setClass("BuckshotData", contains="BuckshotObject",
+         representation=representation(
+           ptr="ptrOrNULL"),
+         prototype=prototype(ptr=NULL))
 
 ##' A trained Buckshot model
 ##' 
@@ -18,10 +25,13 @@ setClass("BuckshotModel", contains="BuckshotObject",
            convergence.threshold="numeric",
            path.length="integer",
            max.iter="integer",
-           lambda="numeric"),
+           lambda="numeric",
+           data='BuckshotData'),
          prototype=prototype(
            type='lasso',
            convergence.threshold=1e-5,
            path.length=1L,
            max.iter=100L,
-           lambda=1))
+           lambda=1,
+           data=new('BuckshotData')
+           ))
