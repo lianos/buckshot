@@ -4,6 +4,8 @@ PKG_LIBS = $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "Rcpp:::LdFlags()
 PKG_LIBS += $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 R_PLATFORM=windows ## hack
 
+PKG_CXXFLAGS += -I../inst/include/shotgun
+
 .PHONY : .depend clean
 
 ## To define other targets to compile, the first target has to be `all`

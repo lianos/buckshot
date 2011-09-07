@@ -5,7 +5,7 @@
 // do you want to overlaod as<> and wrap?
 #include <Rcpp.h>
 
-#include "shotgun/common.h"
+#include "common.h"
 
 RcppExport SEXP
 lasso(x_, y_, lambda_, path_length_, threshold_, max_iter_);
