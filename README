@@ -1,0 +1,13 @@
+This package will provide an R (S4) interface to "shotgun", the
+(large-scale) parallel coordinate decent solver for lasso and sparse
+logistic regression written in C++ ... we can't let MATLAB have all
+of the glory!
+
+Shotgun is developed at CMU by Aapo Kyrola, Joseph Bradley,
+Danny Bickson, and Carlos Guestrin.
+
+See:
+
+  http://select.cs.cmu.edu/code/
+  http://arxiv.org/abs/1105.5379
+  
