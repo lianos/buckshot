@@ -1,0 +1,13 @@
+useDynLib(buckshot)
+
+import(methods)
+
+exportClasses(
+  Buckshot
+)
+
+exportMethods(
+  buckshot
+)
+
+export(buckshot)
