@@ -63,6 +63,9 @@ setMethod("buckshot", c(x="BuckshotData"),
 function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
          convergence.threshold=1e-5, ...) {
   type <- matchLearningAlgo(type)
+  if (is.null(x@ptr)) {
+    stop("BuckshotData object (x) is not properly initialized")
+  }
   
   ## Coerce variables to correct data type
   y <- as.numeric(y) ## shotgun values are `double`s
@@ -80,3 +83,28 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
                  PACKAGE="buckshot")
   }
 })
+
+
+setMethod("bias", "BuckshotModel",
+function(object, ...) {
+  stop("TODO: Implement bias,BuckshotModel")
+})
+
+setMethod("coef", "BuckshotModel",
+function(object, ...) {
+  stop("TODO: Implement coef,BuckshotModel")
+  ## Return a column matrix
+})
+
+setMethod("fitted", "BuckshotModel",
+function(object, ...) {
+  predict(object, newdata=NULL, type="response")
+})
+
+setMethod("predict", "BuckshotModel",
+function(object, newdata=NULL, type="response", ...) {
+  ## NOTE: There is no bias term, so data should be centered to 0
+  type <- match.arg(type, c('response', 'decision', 'probabilities'))
+  newdata * coef(object)
+}
+

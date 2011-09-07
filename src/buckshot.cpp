@@ -18,7 +18,6 @@ BEGIN_RCPP
     
     shotgun_data *prob = new shogun_data;
     
-    // Is this really right?
     prob->A_rows.reserve(nrows);
     prob->A_cols.reserve(ncols);
     
