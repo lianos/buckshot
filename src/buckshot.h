@@ -25,18 +25,7 @@ create_shotgun_data_csparse(SEXP matrix_, SEXP nnz_, SEXP nrows_, SEXP ncols_,
                             SEXP labels_);
 
 RcppExport SEXP
-buckshot_lasso(SEXP prob_, SEXP lambda_, SEXP path_length_, SEXP threshold_,
-               SEXP max_iter_, SEXP threads_);
-
-RcppExport SEXP
-buckshot_logreg(SEXP prob_, SEXP lambda_, SEXP threshold_, SEXP max_iter_,
-                SEXP threads_);
-
-/* -------------------------------- retire me --------------------------------*/
-#if 0
-RcppExport SEXP
-create_shotgun_data(SEXP rows_, SEXP cols_, SEXP vals_, SEXP nrows_,
-                    SEXP ncols_, SEXP y_);
-#endif
+do_buckshot(SEXP prob_, SEXP algo_, SEXP lambda_, SEXP path_length_,
+            SEXP threshold_, SEXP max_iter_, SEXP threads_, SEXP verbose_);
 
 #endif /* __BUCKSHOT_H__ */

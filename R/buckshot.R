@@ -49,7 +49,7 @@ function(x, data=NULL, type='lasso', ..., na.action=na.omit, scaled=TRUE) {
 })
 
 setMethod("buckshot", c(x="matrix"),
-function(x, y=NULL, type='lasso', na.action=na.omit, scaled=TRUE, ...) {
+function(x, y, type='lasso', na.action=na.omit, scaled=TRUE, ...) {
   type <- matchLearningAlgo(type)
   bdata <- BuckshotData(x, y, na.action=na.omit, scaled=scaled, ...)
   buckshot(bdata, type=type, ...)
@@ -57,7 +57,7 @@ function(x, y=NULL, type='lasso', na.action=na.omit, scaled=TRUE, ...) {
 
 setMethod("buckshot", c(x="BuckshotData"),
 function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
-         convergence.threshold=1e-5, threads=1, ...) {
+         convergence.threshold=1e-5, threads=1, verbose=FALSE, ...) {
   type <- matchLearningAlgo(type)
   if (is.null(x@ptr)) {
     stop("BuckshotData object (x) is not properly initialized")
@@ -65,19 +65,19 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
   
   ## Coerce variables to correct data type
   y <- as.numeric(y) ## shotgun values are `double`s
-  lambda <- as.numeric(lambda)
-  path.length <- as.integer(path.length)
-  max.iter <- as.integer(max.iter)
-  convergence.threshold <- as.numeric(convergence.threshold)
+  lambda <- as.numeric(lambda[1L])
+  path.length <- as.integer(path.length[1L])
+  max.iter <- as.integer(max.iter[1L])
+  convergence.threshold <- as.numeric(convergence.threshold[1L])
   
-  ## NOTE: matlab examples expect rows=observations, columns=features
-  if (type == 'lasso') {
-    ret <- .Call("buckshot_lasso", x@ptr, lambda, path.length,
-                 convergence.threshold, max.iter, threads, PACKAGE="buckshot")
-  } else {
-    ret <- .Call("buckshot_logreg", x@ptr, lambda, convergence.threshold,
-                 max.iter, threads, PACKAGE="buckshot")
+  if (!is.logical(verbose)) {
+    verbose <- FALSE
   }
+  verbose <- verbose[1L]
+  
+  ret <- .Call("do_buckshot", x@ptr, type, lambda, path.length,
+               convergence.threshold, max.iter, threads, verbose,
+               PACKAGE="buckshot")
   
   model <- new("BuckshotModel", data=x, type=type, lambda=lambda,
                path.length=path.length, max.iter=max.iter,
