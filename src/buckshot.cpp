@@ -83,7 +83,8 @@ BEGIN_RCPP
     int max_iter = Rcpp::as<int>(max_iter_);
     int numthreads = Rcpp::as<int>(threads_);
     int verbose = (Rcpp::as<bool>(verbose_)) ? 1 : 0;
-
+    std::vector<double> xout;
+    
     bool all_zero = false;
     
     if (numthreads > 0) {
@@ -103,8 +104,12 @@ BEGIN_RCPP
         throw std::runtime_error("Unknown algorithm");
     }
     
-    return R_NilValue;
+    xout.resize(prob->nx);
+    for (int i = 0; i < prob->nx; i++) {
+        xout[i] = prob->x[i];
+    }
+    
+    return Rcpp::wrap(xout);
 END_RCPP
 }
 
-#endif

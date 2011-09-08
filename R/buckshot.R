@@ -81,7 +81,8 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
   
   model <- new("BuckshotModel", data=x, type=type, lambda=lambda,
                path.length=path.length, max.iter=max.iter,
-               convergence.threshold=convergence.threshold)
+               convergence.threshold=convergence.threshold,
+               coefs=ret)
   model
 })
 
@@ -93,19 +94,34 @@ function(object, ...) {
 
 setMethod("coef", "BuckshotModel",
 function(object, ...) {
-  stop("TODO: Implement coef,BuckshotModel")
-  ## Return a column matrix
+  object@coefs
 })
 
 setMethod("fitted", "BuckshotModel",
 function(object, ...) {
+  stop("fitted not implemented")
   predict(object, newdata=NULL, type="response")
 })
 
 setMethod("predict", "BuckshotModel",
-function(object, newdata=NULL, type="response", ...) {
-  ## NOTE: There is no bias term, so data should be centered to 0
-  type <- match.arg(type, c('response', 'decision', 'probabilities'))
-  newdata * coef(object)
+function(object, newdata=NULL, type="decision", ...) {
+  type <- match.arg(type, c('decision', 'response', 'probabilities'))
+  if (is.null(newdata)) {
+    stop("Autopredicting on training data not supported yet")
+  }
+  stopifnot(is.matrix(newdata))
+  
+  x <- coef(object)
+  if (ncol(newdata) != length(x)) {
+    stop("bad dimmensions for `newdata`")
+  }
+  
+  y <- newdata %*% x
+
+  if (object@type == 'logistic' && type == 'decision') {
+    y <- sign(y)
+  }
+  
+  y
 })
 

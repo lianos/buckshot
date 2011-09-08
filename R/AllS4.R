@@ -26,14 +26,16 @@ setClass("BuckshotModel", contains="BuckshotObject",
            path.length="integer",
            max.iter="integer",
            lambda="numeric",
-           data='BuckshotData'),
+           data='BuckshotData',
+           coefs='numeric'),
          prototype=prototype(
            type='lasso',
            convergence.threshold=1e-5,
            path.length=1L,
            max.iter=100L,
            lambda=1,
-           data=new('BuckshotData')
+           data=new('BuckshotData'),
+           coefs=numeric()
            ))
 
 ## Methods

@@ -1,5 +1,6 @@
 setMethod("BuckshotData", c(x="formula"),
 function(x, data=NULL, ..., na.action=na.omit, scaled=TRUE) {
+  ## This majority of this formula fiddling code is taken from kernlab
   cl <- match.call()
   m <- match.call(expand.dots=FALSE)
   if (is.matrix(eval(m$data, parent.frame()))) {
