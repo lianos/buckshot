@@ -19,7 +19,10 @@ function(x, data=NULL, type='lasso', ..., na.action=na.omit, scaled=TRUE) {
 
 setMethod("buckshot", c(x="matrix"),
 function(x, y, type='lasso', na.action=na.omit, scaled=TRUE, ...) {
-  type <- matchLearningAlgo(type)
+  type <- buckshot:::matchLearningAlgo(type)
+  if (missing(y)) {
+    stop("labels `y` required")
+  }
   bdata <- BuckshotData(x, y, na.action=na.omit, scaled=scaled, ...)
   buckshot(bdata, type=type, ...)
 })
@@ -33,7 +36,6 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
   }
   
   ## Coerce variables to correct data type
-  y <- as.numeric(y) ## shotgun values are `double`s
   lambda <- as.numeric(lambda[1L])
   path.length <- as.integer(path.length[1L])
   max.iter <- as.integer(max.iter[1L])

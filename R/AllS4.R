@@ -54,4 +54,8 @@ setClass("BuckshotModel", contains="BuckshotObject",
 setGeneric("BuckshotData", function(x, ...) standardGeneric("BuckshotData"))
 
 ##' Builds a lasso or logistic regression model.
+##' 
+##' @usage
+##' lasso.model <- buckshot(X1, y1,, 'lasso', lambda=0.5)
+##' logistic.model <- buckshot(X2, y2, 'logistic', lambda=0.5)
 setGeneric("buckshot", function(x, ...) standardGeneric("buckshot"))
