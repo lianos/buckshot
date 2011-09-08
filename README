@@ -16,6 +16,10 @@ For more information about shotgun, please see:
   Shotgun homepage: http://select.cs.cmu.edu/code/
   ICML 2011 paper: http://arxiv.org/abs/1105.5379
 
+See the buckshot wiki for a quick overview:
+
+  https://github.com/lianos/buckshot/wiki
+
 The buckshot library is neither endorsed or supported by the authors of the
 shotgun library.
 
