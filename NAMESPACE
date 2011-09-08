@@ -19,13 +19,11 @@ exportMethods(
   buckshot,
   BuckshotData,
   
-  bias,
   coef,
   fitted,
   predict
 )
 
 export(
-  buckshot,
   read.matrix.mart
 )

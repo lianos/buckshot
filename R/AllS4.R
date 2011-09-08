@@ -1,10 +1,13 @@
+###############################################################################
+## Classes
+## ----------------------------------------------------------------------------
+
 setClassUnion("ptrOrNULL", c("externalptr", "NULL"))
 ##' Base object for Buckshot classes
 setClass("BuckshotObject", contains="VIRTUAL",
          representation=representation(cache="environment"))
 setMethod("initialize", "BuckshotObject",
 function(.Object, ..., cache=new.env()) {
-  cache$threads <- 1L
   callNextMethod(.Object, cache=cache, ...)
 })
 
@@ -35,14 +38,20 @@ setClass("BuckshotModel", contains="BuckshotObject",
            max.iter=100L,
            lambda=1,
            data=new('BuckshotData'),
-           coefs=numeric()
-           ))
+           coefs=numeric()))
 
+###############################################################################
 ## Methods
+## ----------------------------------------------------------------------------
+
+##' Build a data object used for buckshot models
+##' 
+##' The shotgun library stores the design matrix and labels in a shotgun_data
+##' object. This function builds that object from the inputs given.
+##' 
+##' Currently only matrices are supported.
+##' TODO: Support the formula interface
 setGeneric("BuckshotData", function(x, ...) standardGeneric("BuckshotData"))
+
+##' Builds a lasso or logistic regression model.
 setGeneric("buckshot", function(x, ...) standardGeneric("buckshot"))
-
-setGeneric("bias", function(object, ...) standardGeneric("bias"))
-
-## setGeneric("train", function(x, ...) standardGeneric("train"))
-## setGeneric("trained", function(x, ...) standardGeneric("trained"))

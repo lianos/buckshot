@@ -1,6 +1,31 @@
+##' Reads in data in matrix market format
+##' 
+##' Warning: This is slow.
+##' 
+##' TODO: Wrap matrix market C code (mmio.{h|c})
+##' 
+##' @param mtx.file The path to the matrix market file
+##' @return A (dense) matrix
+read.matrix.mart <- function(mtx.file) {
+  mtx <- read.table(mtx.file, header=FALSE, comment.char="%")
+  nr <- mtx[1,1]
+  nc <- mtx[1,2]
+  nnz <- mtx[1,3]
+  
+  mtx <- mtx[-1,]
+  m <- matrix(0, nrow=nr, ncol=nc)
+  m[mtx[,1] * mtx[,2]] <- mtx[,3]
+  m
+}
+
+##' Builds a BuckshotData object from a formula
+##' 
+##' TODO: Support data building from formula
 setMethod("BuckshotData", c(x="formula"),
 function(x, data=NULL, ..., na.action=na.omit, scaled=TRUE) {
   ## This majority of this formula fiddling code is taken from kernlab
+  stop("building data objects from formulas is not supported yet")
+  
   cl <- match.call()
   m <- match.call(expand.dots=FALSE)
   if (is.matrix(eval(m$data, parent.frame()))) {
@@ -75,37 +100,3 @@ function(x, y, ...) {
 # function(x, y, ...) {
 #   stop("TODO: BuckshotData,sparseMatrix")
 # })
-
-# setMethod("BuckshotData", c(x="integer"),
-# function(x, cols, values, nrows, ncols, y, ...) {
-#   ## Double check types of all parameters
-#   lengths <- c(length(x), length(cols), length(values))
-#   stopifnot(length(unique(lengths)) == 1L)
-#   stopifnot(length(y) == nrows)
-#   
-#   stopifnot(is.integer(x))
-#   stopifnot(is.integer(cols))
-#   stopifnot(is.numeric(y))
-#   
-#   stopifnot(is.integer(nrows))
-#   stopifnot(is.integer(ncols))
-#   
-#   stopifnot(all(x >= 1 & x <= nrows))
-#   stopifnot(all(cols >= 1 & cols <= ncols))
-#   
-#   ptr <- .Call("create_shotgun_data", x, cols, values, nrows, ncols, y,
-#                PACKAGE="buckshot")
-#   new('BuckshotData', ptr=ptr)
-# })
-
-read.matrix.mart <- function(mtx.file) {
-  mtx <- read.table(mtx.file, header=FALSE, comment.char="%")
-  nr <- mtx[1,1]
-  nc <- mtx[1,2]
-  nnz <- mtx[1,3]
-  
-  mtx <- mtx[-1,]
-  m <- matrix(0, nrow=nr, ncol=nc)
-  m[mtx[,1] * mtx[,2]] <- mtx[,3]
-  m
-}

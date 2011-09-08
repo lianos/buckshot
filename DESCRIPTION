@@ -1,4 +1,5 @@
 Package: buckshot
+Type: Package
 Title: S4 interface to "shotgun", a C++ parallel lasso and sparse logistic regression solver
 Version: 0.1
 Author: Steve Lianoglou
@@ -10,6 +11,7 @@ Description: This package provides an R (S4) interface to "shotgun", the
   The shotgun C++ library is developed at CMU by Aapo Kyrola,
   Joseph Bradley, Danny Bickson, and Carlos Guestrin.
 License: Apache-2
+LazyLoad: yes
 Depends: R (>= 2.13.0), Rcpp (>= 0.9.6), Matrix
 Imports: Rcpp, methods
 Suggests: testthat (>= 0.5), glmnet (>= 1.7), caret (>= 4.91)

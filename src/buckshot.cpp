@@ -87,14 +87,16 @@ BEGIN_RCPP
     
     bool all_zero = false;
     
-    if (numthreads > 0) {
-        #ifndef DISABLE_OMP
-        omp_set_num_threads(numthreads);
-        if (verbose) {
-          Rprintf("  Setting OMP threads: %d\n", numthreads);
-        }
-        #endif
-    }
+    // Simon says to set threads via the OMP_NUM_THREADS environment var
+    // http://article.gmane.org/gmane.comp.lang.r.devel/28836
+    // if (numthreads > 0) {
+    //     #ifndef DISABLE_OMP
+    //     omp_set_num_threads(numthreads);
+    //     if (verbose) {
+    //       Rprintf("  Setting OMP threads: %d\n", numthreads);
+    //     }
+    //     #endif
+    // }
     
     if (algo.compare("lasso") == 0) {
         solveLasso(prob, lambda, path_length, threshold, max_iter, verbose);

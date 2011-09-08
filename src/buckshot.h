@@ -10,7 +10,7 @@
 extern "C" {
 
 static void shotgun_data_finalizer(SEXP sptr) {
-    Rprintf("kiling a data object\n");
+    // Rprintf("deleting shotgun_data pointer\n");
     shotgun_data *ptr = (shotgun_data *) R_ExternalPtrAddr(sptr);
     delete ptr;
 }

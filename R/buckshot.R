@@ -7,44 +7,13 @@ matchLearningAlgo <- function(x, as.int=FALSE) {
   algo
 }
 
+##' Builds a buckshot model from a formula object
+##' 
+##' TODO: Support formula model creation
 setMethod("buckshot", c(x="formula"),
 function(x, data=NULL, type='lasso', ..., na.action=na.omit, scaled=TRUE) {
-  # cl <- match.call()
-  # m <- match.call(expand.dots=FALSE)
-  # if (is.matrix(eval(m$data, parent.frame()))) {
-  #   m$data <- as.data.frame(data)
-  # }
-  # m$... <- NULL
-  # m$formula <- m$x
-  # m$x <- NULL
-  # m$scaled <- NULL
-  # m[[1]] <- as.name("model.frame")
-  # m <- eval(m, parent.frame())
-  # Terms <- attr(m, "terms")
-  # attr(Terms, "intercept") <- 0    ## no intercept
-  # 
-  # x <- model.matrix(Terms, m)
-  # y <- model.extract(m, response)
-  # 
-  # if (length(scaled) == 1) {
-  #   scaled <- rep(scaled, ncol(x))
-  # }
-  # if (any(scaled)) {
-  #   remove <- unique(c(which(labels(Terms) %in% names(attr(x, "contrasts"))),
-  #                      which(!scaled)))
-  #   scaled <- !attr(x, "assign") %in% remove
-  # }
-  # 
-  # ret <- buckshot(x, y, scaled=scaled, ...)
-  # # kcall(ret) <- cl
-  # # attr(Terms,"intercept") <- 0 ## no intercept
-  # # terms(ret) <- Terms
-  # 
-  # if (!is.null(attr(m, "na.action"))) {
-  #   n.action(ret) <- attr(m, "na.action")
-  # }
   type <- matchLearningAlgo(type)
-  bdata <- BuckshotData(x, data=NULL, na.action=na.action, scaled=scaled)
+  bdata <- BuckshotData(x, data=data, na.action=na.action, scaled=scaled)
   buckshot(bdata, type=type, ...)
 })
 
@@ -69,6 +38,14 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
   path.length <- as.integer(path.length[1L])
   max.iter <- as.integer(max.iter[1L])
   convergence.threshold <- as.numeric(convergence.threshold[1L])
+  threads <- as.integer(threads[1L])
+  
+  ## Simon says to set threads for OpenMP via the environment vars
+  ## http://article.gmane.org/gmane.comp.lang.r.devel/28836
+  orig.threads <- Sys.getenv("OMP_NUM_THREADS")
+  if (!is.numeric(orig.threads)) orig.threads <- 1L
+  on.exit(Sys.setenv(OMP_NUM_THREADS=as.integer(orig.threads)))
+  Sys.setenv(OMP_NUM_THREADS=threads)
   
   if (!is.logical(verbose)) {
     verbose <- FALSE
@@ -86,12 +63,6 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
   model
 })
 
-setMethod("bias", "BuckshotModel",
-function(object, ...) {
-  stop("TODO: Implement bias,BuckshotModel")
-  ## return 0, or something from scale
-})
-
 setMethod("coef", "BuckshotModel",
 function(object, ...) {
   object@coefs
@@ -105,15 +76,18 @@ function(object, ...) {
 
 setMethod("predict", "BuckshotModel",
 function(object, newdata=NULL, type="decision", ...) {
-  type <- match.arg(type, c('decision', 'response', 'probabilities'))
   if (is.null(newdata)) {
     stop("Autopredicting on training data not supported yet")
   }
   stopifnot(is.matrix(newdata))
+  type <- match.arg(type, c('decision', 'response', 'probabilities'))
+  if (type == 'probabilities') {
+    stop("type=probabilities not implemented")
+  }
   
   x <- coef(object)
   if (ncol(newdata) != length(x)) {
-    stop("bad dimmensions for `newdata`")
+    stop("bad dimmensions for `newdata`, ", length(x), "reqiured")
   }
   
   y <- newdata %*% x
