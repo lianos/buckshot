@@ -9,7 +9,8 @@ Description: This package provides an R (S4) interface to "shotgun", the
   logistic regression written in C++.
   .
   The shotgun C++ library is developed at CMU by Aapo Kyrola,
-  Joseph Bradley, Danny Bickson, and Carlos Guestrin.
+  Joseph Bradley, Danny Bickson, and Carlos Guestrin. It was debuted at
+  ICML 2011. See the URLs for further references.
 License: Apache-2
 LazyLoad: yes
 Depends: R (>= 2.13.0), Rcpp (>= 0.9.6), Matrix
