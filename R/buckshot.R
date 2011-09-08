@@ -7,10 +7,6 @@ matchLearningAlgo <- function(x, as.int=FALSE) {
   algo
 }
 
-setGeneric("buckshot", function(x, ...) {
-  standardGeneric("buckshot")
-})
-
 setMethod("buckshot", c(x="formula"),
 function(x, data=NULL, type='lasso', ..., na.action=na.omit, scaled=TRUE) {
   # cl <- match.call()
@@ -76,11 +72,11 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
   
   ## NOTE: matlab examples expect rows=observations, columns=features
   if (type == 'lasso') {
-    ret <- .Call("lasso", x@ptr, lambda, path.length, convergence.threshold,
-                 max.iter, PACKAGE="buckshot")
+    ret <- .Call("buckshot_lasso", x@ptr, lambda, path.length,
+                 convergence.threshold, max.iter, PACKAGE="buckshot")
   } else {
-    ret <- .Call("logreg", x@ptr, lambda, convergence.threshold, max.iter,
-                 PACKAGE="buckshot")
+    ret <- .Call("buckshot_logreg", x@ptr, lambda, convergence.threshold,
+                 max.iter, PACKAGE="buckshot")
   }
 })
 
@@ -88,6 +84,7 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
 setMethod("bias", "BuckshotModel",
 function(object, ...) {
   stop("TODO: Implement bias,BuckshotModel")
+  ## return 0, or something from scale
 })
 
 setMethod("coef", "BuckshotModel",
@@ -106,5 +103,5 @@ function(object, newdata=NULL, type="response", ...) {
   ## NOTE: There is no bias term, so data should be centered to 0
   type <- match.arg(type, c('response', 'decision', 'probabilities'))
   newdata * coef(object)
-}
+})
 

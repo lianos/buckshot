@@ -1,13 +1,30 @@
 useDynLib(buckshot)
 
 import(methods)
+import(Matrix)
+
+# import(Rcpp)
+
+importFrom(stats,
+  coef,
+  fitted,
+  na.omit,
+  predict,
+  terms)
 
 exportClasses(
-  Buckshot
+  BuckshotData,
+  BuckshotModel
 )
 
 exportMethods(
-  buckshot
+  buckshot,
+  BuckshotData,
+  
+  bias,
+  coef,
+  fitted,
+  predict
 )
 
 export(buckshot)

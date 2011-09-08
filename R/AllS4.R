@@ -35,3 +35,12 @@ setClass("BuckshotModel", contains="BuckshotObject",
            lambda=1,
            data=new('BuckshotData')
            ))
+
+## Methods
+setGeneric("BuckshotData", function(x, ...) standardGeneric("BuckshotData"))
+setGeneric("buckshot", function(x, ...) standardGeneric("buckshot"))
+
+setGeneric("bias", function(object, ...) standardGeneric("bias"))
+
+## setGeneric("train", function(x, ...) standardGeneric("train"))
+## setGeneric("trained", function(x, ...) standardGeneric("trained"))

@@ -1,21 +1,9 @@
-PKG_LIBS +=`$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(LAPACK_LIBS) \
-  $(BLAS_LIBS) $(FLIBS)
+PKG_LIBS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
+#PKG_LIBS = $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()" )
 
-PKG_CXXFLAGS += -I../inst/include/shotgun
+.PHONY: all
 
-.PHONY : .depend clean
+all: $(SHLIB)
 
-## To define other targets to compile, the first target has to be `all`
-## Having `all` depend on $(SHLIB) directs it to compile the libraries
-## when all is said and done
-all: .depend $(SHLIB)
-
-.depend:
-    @echo "TODO: build include/shotgun lib?"
-
-# .depend:
-#       @echo "===================================================================="
-#       @echo "Compiling included shogun-toolbox library to link against
-#       @echo "===================================================================="
-#       find ../inst/include/shogun -name "*.c" -o -name "*.cpp" -exec $(CXX) -MM $(DEFINES) $(PKG_CXXFLAGS) {} -MT {}.o \; >.depend
-#       find . -name "*.c" -o -name "*.cpp" -exec $(CXX) -MM $(DEFINES) $(PKG_CXXFLAGS) {} -MT {}.o \; >>.depend
+clean:
+	rm -f *.o
