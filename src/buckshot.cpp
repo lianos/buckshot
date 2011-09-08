@@ -31,7 +31,6 @@ BEGIN_RCPP
     }
     
     for (i = 0; i < nrows; i++) {
-        // prob->y.push_back(labels[i]);
         prob->y[i] = labels[i];
     }
     
@@ -89,6 +88,7 @@ BEGIN_RCPP
     
     // Simon says to set threads via the OMP_NUM_THREADS environment var
     // http://article.gmane.org/gmane.comp.lang.r.devel/28836
+    // 
     // if (numthreads > 0) {
     //     #ifndef DISABLE_OMP
     //     omp_set_num_threads(numthreads);
