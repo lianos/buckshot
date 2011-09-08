@@ -57,7 +57,7 @@ function(x, y=NULL, type='lasso', na.action=na.omit, scaled=TRUE, ...) {
 
 setMethod("buckshot", c(x="BuckshotData"),
 function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
-         convergence.threshold=1e-5, ...) {
+         convergence.threshold=1e-5, threads=1, ...) {
   type <- matchLearningAlgo(type)
   if (is.null(x@ptr)) {
     stop("BuckshotData object (x) is not properly initialized")
@@ -73,13 +73,17 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
   ## NOTE: matlab examples expect rows=observations, columns=features
   if (type == 'lasso') {
     ret <- .Call("buckshot_lasso", x@ptr, lambda, path.length,
-                 convergence.threshold, max.iter, PACKAGE="buckshot")
+                 convergence.threshold, max.iter, threads, PACKAGE="buckshot")
   } else {
     ret <- .Call("buckshot_logreg", x@ptr, lambda, convergence.threshold,
-                 max.iter, PACKAGE="buckshot")
+                 max.iter, threads, PACKAGE="buckshot")
   }
+  
+  model <- new("BuckshotModel", data=x, type=type, lambda=lambda,
+               path.length=path.length, max.iter=max.iter,
+               convergence.threshold=convergence.threshold)
+  model
 })
-
 
 setMethod("bias", "BuckshotModel",
 function(object, ...) {

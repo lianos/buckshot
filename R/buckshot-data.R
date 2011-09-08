@@ -56,43 +56,46 @@ function(x, y, scaled=TRUE, ...) {
   storage.mode(x) <- 'numeric'
   y <- as.numeric(y)
   
-  idxs <- which(x != 0, arr.ind=TRUE)
-  
-  ret <- BuckshotData(idxs[, 1L], idxs[, 2L], x[idxs], nrow(x), ncol(x), y)
-  ret
+  ptr <- .Call("create_shotgun_data_dense", x, y, PACKAGE="buckshot")
+  new("BuckshotData", ptr=ptr)
 })
 
 setMethod("BuckshotData", c(x="Matrix"),
-function(x, ...) {
-  stop("TODO: BuckshotData,Matrix")
+function(x, y, ...) {
+  BuckshotData(as(x, "matrix"), y, ...)
 })
 
-setMethod("BuckshotData", c(x="sparseMatrix"),
-function(x, ...) {
+setMethod("BuckshotData", c(x="CsparseMatrix"),
+function(x, y, ...) {
   stop("TODO: BuckshotData,sparseMatrix")
 })
 
-setMethod("BuckshotData", c(x="integer"),
-function(x, cols, values, nrows, ncols, y, ...) {
-  ## Double check types of all parameters
-  lengths <- c(length(x), length(cols), length(values))
-  stopifnot(length(unique(lengths)) == 1L)
-  stopifnot(length(y) == nrows)
-  
-  stopifnot(is.integer(x))
-  stopifnot(is.integer(cols))
-  stopifnot(is.numeric(y))
-  
-  stopifnot(is.integer(nrows))
-  stopifnot(is.integer(ncols))
-  
-  stopifnot(all(x >= 1 & x <= nrows))
-  stopifnot(all(cols >= 1 & cols <= ncols))
-  
-  ptr <- .Call("create_shotgun_data", x, cols, values, nrows, ncols, y,
-               PACKAGE="buckshot")
-  new('BuckshotData', ptr=ptr)
-})
+# setMethod("BuckshotData", c(x="sparseMatrix"),
+# function(x, y, ...) {
+#   stop("TODO: BuckshotData,sparseMatrix")
+# })
+
+# setMethod("BuckshotData", c(x="integer"),
+# function(x, cols, values, nrows, ncols, y, ...) {
+#   ## Double check types of all parameters
+#   lengths <- c(length(x), length(cols), length(values))
+#   stopifnot(length(unique(lengths)) == 1L)
+#   stopifnot(length(y) == nrows)
+#   
+#   stopifnot(is.integer(x))
+#   stopifnot(is.integer(cols))
+#   stopifnot(is.numeric(y))
+#   
+#   stopifnot(is.integer(nrows))
+#   stopifnot(is.integer(ncols))
+#   
+#   stopifnot(all(x >= 1 & x <= nrows))
+#   stopifnot(all(cols >= 1 & cols <= ncols))
+#   
+#   ptr <- .Call("create_shotgun_data", x, cols, values, nrows, ncols, y,
+#                PACKAGE="buckshot")
+#   new('BuckshotData', ptr=ptr)
+# })
 
 load.matrix.mart <- function(mtx.file) {
   mtx <- read.table(mtx.file, header=FALSE, comment.char="%")

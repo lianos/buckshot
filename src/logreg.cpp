@@ -26,7 +26,7 @@
 // 
  
 #include "common.h"
-
+#include "Rcpp.h"
 
 shotgun_data * logregprob;
 
