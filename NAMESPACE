@@ -3,8 +3,6 @@ useDynLib(buckshot)
 import(methods)
 import(Matrix)
 
-# import(Rcpp)
-
 importFrom(stats,
   coef,
   fitted,
@@ -27,4 +25,7 @@ exportMethods(
   predict
 )
 
-export(buckshot)
+export(
+  buckshot,
+  read.matrix.mart
+)

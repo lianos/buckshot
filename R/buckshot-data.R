@@ -97,7 +97,7 @@ function(x, y, ...) {
 #   new('BuckshotData', ptr=ptr)
 # })
 
-load.matrix.mart <- function(mtx.file) {
+read.matrix.mart <- function(mtx.file) {
   mtx <- read.table(mtx.file, header=FALSE, comment.char="%")
   nr <- mtx[1,1]
   nc <- mtx[1,2]

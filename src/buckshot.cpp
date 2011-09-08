@@ -89,7 +89,9 @@ BEGIN_RCPP
     if (numthreads > 0) {
         #ifndef DISABLE_OMP
         omp_set_num_threads(numthreads);
-        // Rprintf("OMP threads = %d\n", numthreads);
+        if (verbose) {
+          Rprintf("  Setting OMP threads: %d\n", numthreads);
+        }
         #endif
     }
     
