@@ -88,6 +88,18 @@ END_RCPP
 }
 
 SEXP
+shotgun_data_labels(SEXP prob_) {
+    shotgun_data *prob = (shotgun_data*) R_ExternalPtrAddr(prob_);
+    return Rcpp::wrap(prob->y);
+}
+
+SEXP
+shotgun_design_matrix(SEXP prob_) {
+    shotgun_data *prob = (shotgun_data*) R_ExternalPtrAddr(prob_);
+    return R_NilValue;
+}
+
+SEXP
 do_buckshot(SEXP prob_, SEXP algo_, SEXP lambda_, SEXP path_length_,
             SEXP threshold_, SEXP max_iter_, SEXP threads_, SEXP verbose_) {
 BEGIN_RCPP
@@ -131,4 +143,5 @@ BEGIN_RCPP
     return Rcpp::wrap(xout);
 END_RCPP
 }
+
 

@@ -1,23 +1,3 @@
-##' Reads in data in matrix market format
-##' 
-##' Warning: This is slow.
-##' 
-##' TODO: Wrap matrix market C code (mmio.{h|c})
-##' 
-##' @param mtx.file The path to the matrix market file
-##' @return A (dense) matrix
-read.matrix.mart <- function(mtx.file) {
-  mtx <- read.table(mtx.file, header=FALSE, comment.char="%")
-  nr <- mtx[1,1]
-  nc <- mtx[1,2]
-  nnz <- mtx[1,3]
-  
-  mtx <- mtx[-1,]
-  m <- matrix(0, nrow=nr, ncol=nc)
-  m[mtx[,1] * mtx[,2]] <- mtx[,3]
-  m
-}
-
 ##' Builds a BuckshotData object from a formula
 ##' 
 ##' TODO: Support data building from formula
@@ -82,8 +62,15 @@ function(x, y, scaled=TRUE, ...) {
   storage.mode(x) <- 'numeric'
   y <- as.numeric(y)
   
+  rm.cols <- which(colSums(x) == 0)
+  if (length(rm.cols) > 0L) {
+    warning("Removing ", length(rm.cols), " columns from design matrix ",
+            "since they are all 0s. See ?BuckshotData for more info.")
+    x <- x[, -rm.cols]
+  }
+  
   ret <- .Call("create_shotgun_data_dense", x, y, PACKAGE="buckshot")
-  new("BuckshotData", ptr=ret$ptr, dim=dim(x), nnz=ret$nnz)
+  new("BuckshotData", ptr=ret$ptr, dim=dim(x), nnz=ret$nnz, rm.cols=rm.cols)
 })
 
 setMethod("BuckshotData", c(x="Matrix"),
@@ -94,9 +81,28 @@ function(x, y, ...) {
 setMethod("BuckshotData", c(x="CsparseMatrix"),
 function(x, y, ...) {
   stop("TODO: BuckshotData,sparseMatrix")
+  
+  rm.cols <- which(colSums(x) == 0)
+  if (length(rm.cols) > 0L) {
+    x <- x[, -rm.cols]
+  }
+  
+  ret <- .Call("create_shotgun_data_csparse", x)
+  new("BuckshotData", ptr=ret$ptr, dim=dim(x), nnz=ret$nnz, rm.cols=rm.cols)
 })
 
 # setMethod("BuckshotData", c(x="sparseMatrix"),
 # function(x, y, ...) {
 #   stop("TODO: BuckshotData,sparseMatrix")
 # })
+
+setMethod("designMatrix", c(x="BuckshotData"),
+function(x, ...) {
+  stop("Reconstructing designMatrix not supported yet")
+  ret <- .Call("shotgun_design_matrix", x@ptr, PACKAGE="buckshot")
+})
+
+setMethod("labels", c(object="BuckshotData"),
+function(object, ...) {
+  .Call("shotgun_data_labels", object@ptr, PACKAGE="buckshot")
+})

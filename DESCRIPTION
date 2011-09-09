@@ -12,6 +12,8 @@ Description: This package provides an R (S4) interface to "shotgun", the
   The shotgun C++ library made its debut at ICML 2011 and is developed
   by Aapo Kyrola, Joseph Bradley, Danny Bickson, and Carlos Guestrin in
   the SELECT lab at CMU. See the URLs for further references.
+  .
+  WARNING: This package only runs on linux and OS X x86_64 bit architectures
 License: Apache-2
 LazyLoad: yes
 Depends: R (>= 2.13.0), Rcpp (>= 0.9.6), Matrix

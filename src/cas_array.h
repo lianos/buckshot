@@ -20,6 +20,8 @@
 #include "assert.h"
 #include <cstdlib>
 
+#include "R.h"
+
 #ifndef _CAS_ARRAY_
 #define _CAS_ARRAY_
 
@@ -84,6 +86,8 @@ class cas_array {
     // Borrowed from Guy Blelloch
     inline bool CAS(long *ptr, long oldv, long newv) {
       unsigned char ret;
+      
+      #if __x86_64__
       /* Note that sete sets a 'byte' not the word */
       __asm__ __volatile__ (
                     "  lock\n"
@@ -92,6 +96,9 @@ class cas_array {
                     : "=q" (ret), "=m" (*ptr)
                     : "r" (newv), "m" (*ptr), "a" (oldv)
                     : "memory");
+      #else
+      Rf_error("The x86_64 architecture is only supported.");
+      #endif
       return ret;
     }
     

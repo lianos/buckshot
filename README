@@ -10,11 +10,11 @@ written in C++
 Shotgun is developed by Aapo Kyrola, Joseph Bradley Danny Bickson, and
 Carlos Guestrin in the SELECT lab at CMU.
 
-For more information about shotgun, please see: 
-
-  SELECT lab: http://select.cs.cmu.edu/people/index.html
-  Shotgun homepage: http://select.cs.cmu.edu/code/
-  ICML 2011 paper: http://arxiv.org/abs/1105.5379
+For more information about the shotgun solver, please see: 
+  
+  Shotgun Code Page: http://select.cs.cmu.edu/code/
+  Shotgun ICML 2011 Paper: http://arxiv.org/abs/1105.5379
+  SELECT Lab People: http://select.cs.cmu.edu/people/index.html
 
 See the buckshot wiki for a quick overview:
 

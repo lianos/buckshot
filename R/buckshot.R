@@ -66,13 +66,15 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
   model
 })
 
-# data <- function(...) {
-#   if (inherits(..1, 'BuckshotModel')) {
-#     ..1@data
-#   } else {
-#     utils::data(...)
-#   }
-# }
+setMethod("designMatrix", c(x="BuckshotModel"),
+function(x, ...) {
+  designMatrix(x@data)
+})
+
+setMethod("labels", c(object="BuckshotModel"),
+function(object, ...) {
+  labels(object@data)
+})
 
 setMethod("coef", "BuckshotModel",
 function(object, ...) {
@@ -88,22 +90,33 @@ function(object, ...) {
 setMethod("predict", "BuckshotModel",
 function(object, newdata=NULL, type="decision", ...) {
   if (is.null(newdata)) {
-    stop("Autopredicting on training data not supported yet")
+    newdata <- designMatrix(object)
   }
-  stopifnot(is.matrix(newdata))
+  if (!(is.matrix(newdata) || inherits(newdata, 'Matrix'))) {
+    stop("matrix (or Matrix) required for newdata")
+  }
+  
   type <- match.arg(type, c('decision', 'response', 'probabilities'))
   if (type == 'probabilities') {
     stop("type=probabilities not implemented")
   }
   
   x <- coef(object)
+  
   if (ncol(newdata) != length(x)) {
-    stop("bad dimmensions for `newdata`, ", length(x),
-         " columns reqiured")
+    if (ncol(newdata) == length(x) + length(object@data@rm.cols)) {
+      warning("It looks like some columns of your data matrix were ",
+              "removed during training, the same columns are being ",
+              "removed from `newdata`")
+      newdata <- newdata[, -object@data@rm.cols]
+    } else {
+      stop("bad dimmensions for `newdata`, ", length(x),
+           " columns reqiured")
+    }
   }
   
   y <- newdata %*% x
-
+  
   if (object@type == 'logistic' && type == 'decision') {
     y <- sign(y)
   }

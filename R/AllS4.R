@@ -17,11 +17,13 @@ setClass("BuckshotData", contains="BuckshotObject",
          representation=representation(
            ptr="ptrOrNULL",
            dim="integer",
-           nnz="integer"),
+           nnz="integer",
+           rm.cols="integer"),
          prototype=prototype(
            ptr=NULL,
            dim=integer(),
-           nnz=0L))
+           nnz=0L,
+           rm.cols=integer()))
 
 ##' A trained Buckshot model
 ##' 
@@ -57,6 +59,8 @@ setClass("BuckshotModel", contains="BuckshotObject",
 ##' Currently only matrices are supported.
 ##' TODO: Support the formula interface
 setGeneric("BuckshotData", function(x, ...) standardGeneric("BuckshotData"))
+setGeneric("designMatrix", function(x, ...) standardGeneric("designMatrix"))
+setGeneric("labels", function(object, ...) standardGeneric("labels"))
 
 ##' Builds a lasso or logistic regression model.
 ##' 

@@ -25,6 +25,12 @@ create_shotgun_data_csparse(SEXP matrix_, SEXP nnz_, SEXP nrows_, SEXP ncols_,
                             SEXP labels_);
 
 RcppExport SEXP
+shotgun_data_labels(SEXP prob_);
+
+RcppExport SEXP
+shotgun_design_matrix(SEXP prob_);
+    
+RcppExport SEXP
 do_buckshot(SEXP prob_, SEXP algo_, SEXP lambda_, SEXP path_length_,
             SEXP threshold_, SEXP max_iter_, SEXP threads_, SEXP verbose_);
 
