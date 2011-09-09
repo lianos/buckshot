@@ -89,7 +89,8 @@ function(object, newdata=NULL, type="decision", ...) {
   
   x <- coef(object)
   if (ncol(newdata) != length(x)) {
-    stop("bad dimmensions for `newdata`, ", length(x), "reqiured")
+    stop("bad dimmensions for `newdata`, ", length(x),
+         " columns reqiured")
   }
   
   y <- newdata %*% x
