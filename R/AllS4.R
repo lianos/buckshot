@@ -15,8 +15,13 @@ function(.Object, ..., cache=new.env()) {
 ##' (sparse) design matrix and labels in a struct.
 setClass("BuckshotData", contains="BuckshotObject",
          representation=representation(
-           ptr="ptrOrNULL"),
-         prototype=prototype(ptr=NULL))
+           ptr="ptrOrNULL",
+           dim="integer",
+           nnz="integer"),
+         prototype=prototype(
+           ptr=NULL,
+           dim=integer(),
+           nnz=0L))
 
 ##' A trained Buckshot model
 ##' 
@@ -59,3 +64,6 @@ setGeneric("BuckshotData", function(x, ...) standardGeneric("BuckshotData"))
 ##' lasso.model <- buckshot(X1, y1,, 'lasso', lambda=0.5)
 ##' logistic.model <- buckshot(X2, y2, 'logistic', lambda=0.5)
 setGeneric("buckshot", function(x, ...) standardGeneric("buckshot"))
+
+##' Access the data object from a buckshot model
+# setGeneric("data", function(x, ...) standardGeneric("data"))

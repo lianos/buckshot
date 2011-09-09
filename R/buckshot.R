@@ -1,10 +1,11 @@
-matchLearningAlgo <- function(x, as.int=FALSE) {
-  algos <- c('lasso', 'logistic')
-  algo <- match.arg(x, algos)
-  if (as.int) {
-    algo <- match(algo, algos)
-  }
-  algo
+##' Perform lasso regression
+lasso <- function(x, ...) {
+  buckshot(x, type='lasso', ...)
+}
+
+##' Perform logistic regression
+logreg <- function(x, ...) {
+  buckshot(x, type='logistic', ...)
 }
 
 ##' Builds a buckshot model from a formula object
@@ -65,6 +66,14 @@ function(x, type='lasso', lambda=1, path.length=1L, max.iter=100L,
   model
 })
 
+# data <- function(...) {
+#   if (inherits(..1, 'BuckshotModel')) {
+#     ..1@data
+#   } else {
+#     utils::data(...)
+#   }
+# }
+
 setMethod("coef", "BuckshotModel",
 function(object, ...) {
   object@coefs
@@ -102,3 +111,13 @@ function(object, newdata=NULL, type="decision", ...) {
   y
 })
 
+## ----------------------------------------------------------------------------
+## Not exported
+matchLearningAlgo <- function(x, as.int=FALSE) {
+  algos <- c('lasso', 'logistic')
+  algo <- match.arg(x, algos)
+  if (as.int) {
+    algo <- match(algo, algos)
+  }
+  algo
+}

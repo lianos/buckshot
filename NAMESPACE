@@ -25,5 +25,10 @@ exportMethods(
 )
 
 export(
+  lasso,
+  logreg,
+  
+  # data,
+  
   read.matrix.mart
 )

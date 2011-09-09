@@ -82,8 +82,8 @@ function(x, y, scaled=TRUE, ...) {
   storage.mode(x) <- 'numeric'
   y <- as.numeric(y)
   
-  ptr <- .Call("create_shotgun_data_dense", x, y, PACKAGE="buckshot")
-  new("BuckshotData", ptr=ptr)
+  ret <- .Call("create_shotgun_data_dense", x, y, PACKAGE="buckshot")
+  new("BuckshotData", ptr=ret$ptr, dim=dim(x), nnz=ret$nnz)
 })
 
 setMethod("BuckshotData", c(x="Matrix"),

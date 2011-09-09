@@ -5,10 +5,12 @@ create_shotgun_data_dense(SEXP matrix_, SEXP labels_) {
 BEGIN_RCPP
     Rcpp::NumericMatrix matrix(matrix_);
     Rcpp::NumericVector labels(labels_);
-    SEXP out;
+    SEXP ptr;
+    Rcpp::List out;
     
     int nrows = matrix.nrow();
     int ncols = matrix.ncol();
+    int nnz = 0;
     
     shotgun_data *prob = new shotgun_data;
     prob->A_rows.resize(nrows);
@@ -26,6 +28,7 @@ BEGIN_RCPP
             if (val != 0) {
                 prob->A_cols[col].add(row, val);
                 prob->A_rows[row].add(col, val);
+                nnz++;
             }
         }
     }
@@ -34,8 +37,13 @@ BEGIN_RCPP
         prob->y[i] = labels[i];
     }
     
-    out = R_MakeExternalPtr(prob, R_NilValue, R_NilValue);
-    R_RegisterCFinalizer(out, shotgun_data_finalizer);
+    ptr = R_MakeExternalPtr(prob, R_NilValue, R_NilValue);
+    R_RegisterCFinalizer(ptr, shotgun_data_finalizer);
+    
+    out = Rcpp::List::create(
+      Rcpp::Named("nnz") = Rcpp::wrap(nnz),
+      Rcpp::Named("ptr") = ptr);
+    
     return out;
 END_RCPP
 }
@@ -45,10 +53,12 @@ create_shotgun_data_csparse(SEXP matrix_, SEXP nnz_, SEXP nrows_, SEXP ncols_,
                             SEXP labels_) {
 BEGIN_RCPP
     int nnz = Rcpp::as<int>(nnz_);
+    int nnz_out = 0;
     int nrows = Rcpp::as<int>(nrows_);
     int ncols = Rcpp::as<int>(ncols_);
     Rcpp::NumericVector labels(labels_);
-    SEXP out;
+    SEXP ptr;
+    Rcpp::List out;
     
     shotgun_data *prob = new shotgun_data;
     prob->A_rows.resize(nrows);
@@ -59,13 +69,20 @@ BEGIN_RCPP
     
     
     // TODO: Fill in sparse matrix stuff
-    
+    // for () {
+    //   nnz_out++;
+    // }
     for (int i = 0; i < nrows; i++) {
         prob->y[i] = labels[i];
     }
     
-    out = R_MakeExternalPtr(prob, R_NilValue, R_NilValue);
-    R_RegisterCFinalizer(out, shotgun_data_finalizer);
+    ptr = R_MakeExternalPtr(prob, R_NilValue, R_NilValue);
+    R_RegisterCFinalizer(ptr, shotgun_data_finalizer);
+    
+    out = Rcpp::List::create(
+      Rcpp::Named("nnz") = Rcpp::wrap(nnz_out),
+      Rcpp::Named("ptr") = ptr);
+    
     return out;
 END_RCPP
 }
