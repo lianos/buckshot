@@ -18,6 +18,7 @@ exportClasses(
 exportMethods(
   buckshot,
   BuckshotData,
+  designMatrix,
   labels,
   
   coef,

@@ -47,20 +47,19 @@ function(x, data=NULL, ..., na.action=na.omit, scaled=TRUE) {
   ret
 })
 
-setMethod("BuckshotData", c(x="matrix"),
-function(x, y, scaled=TRUE, ...) {
-  if (!is.numeric(x)) {
+preprocess.xy <- function(x, y) {
+  if (!is.numeric(x[1L])) {
     stop("Only numeric data is supported")
+  }
+  if (!is.matrix(x) && !inherits(x, 'Matrix')) {
+    stop("x needs to be a matrix (or Matrix)")
   }
   if (missing(y) || !is.numeric(y)) {
     stop("Numberic labels (y) are required")
   }
-  if (length(y) != nrow(x)) {
+  if (nrow(x) != length(y)) {
     stop("Number of labels != number of observations")
   }
-  
-  storage.mode(x) <- 'numeric'
-  y <- as.numeric(y)
   
   rm.cols <- which(colSums(x) == 0)
   if (length(rm.cols) > 0L) {
@@ -69,8 +68,16 @@ function(x, y, scaled=TRUE, ...) {
     x <- x[, -rm.cols]
   }
   
-  ret <- .Call("create_shotgun_data_dense", x, y, PACKAGE="buckshot")
-  new("BuckshotData", ptr=ret$ptr, dim=dim(x), nnz=ret$nnz, rm.cols=rm.cols)
+  list(x=x, y=as.numeric(y), rm.cols=rm.cols)
+}
+
+setMethod("BuckshotData", c(x="matrix"),
+function(x, y, scaled=TRUE, ...) {
+  dat <- preprocess.xy(x, y)
+  storage.mode(dat$x) <- 'numeric'
+  ret <- .Call("create_shotgun_data_dense", dat$x, dat$y, PACKAGE="buckshot")
+  new("BuckshotData", ptr=ret$ptr, dim=dim(dat$x), nnz=ret$nnz,
+      rm.cols=dat$rm.cols)
 })
 
 setMethod("BuckshotData", c(x="Matrix"),
@@ -78,16 +85,40 @@ function(x, y, ...) {
   BuckshotData(as(x, "matrix"), y, ...)
 })
 
+setMethod("BuckshotData", c(x="TsparseMatrix"),
+function(x, y, ...) {
+  dat <- preprocess.xy(x, y)  
+  ret <- .Call("create_shotgun_data_tsparse", as.numeric(dat$x@x),
+               dat$x@i, dat$x@j, nrow(dat$x), ncol(dat$x), dat$y,
+               PACKAGE="buckshot")
+  new("BuckshotData", ptr=ret$ptr, dim=dim(x), nnz=ret$nnz,
+      rm.cols=dat$rm.cols)
+})
+
 setMethod("BuckshotData", c(x="CsparseMatrix"),
 function(x, y, ...) {
-  stop("TODO: BuckshotData,sparseMatrix")
+  return(BuckshotData(as(x, "TsparseMatrix"), y, ...))
+  
+  ## TODO: Figure out how to properly index CsparseMatrix in order to skip copy
+  validate.xy(x, y)
   
   rm.cols <- which(colSums(x) == 0)
   if (length(rm.cols) > 0L) {
     x <- x[, -rm.cols]
   }
   
-  ret <- .Call("create_shotgun_data_csparse", x)
+  vals <- as.numeric(x@x)
+  y <- as.numeric(y)
+  
+  ## x@x : The non-zero values of the matrix, column order
+  ## x@p : 0-based-index position of the *first* element the n-th column
+  ## x@i : 0-based row index for the i-5h value in @x
+  ## x@Dimnames : length(2) of dimnames
+  ## x@factors : empty list (of wut?)
+  ## x@Dim : length 2 integer vector of row,col dims
+  
+  ret <- .Call("create_shotgun_data_csparse", as.numeric(x@x), x@i, x@p,
+               nrow(x), ncol(x), y, PACKAGE="buckshot")
   new("BuckshotData", ptr=ret$ptr, dim=dim(x), nnz=ret$nnz, rm.cols=rm.cols)
 })
 

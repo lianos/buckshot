@@ -18,7 +18,7 @@ function(x, data=NULL, type='lasso', ..., na.action=na.omit, scaled=TRUE) {
   buckshot(bdata, type=type, ...)
 })
 
-setMethod("buckshot", c(x="matrix"),
+setMethod("buckshot", c(x="MatrixLike"),
 function(x, y, type='lasso', na.action=na.omit, scaled=TRUE, ...) {
   type <- buckshot:::matchLearningAlgo(type)
   if (missing(y)) {
@@ -115,7 +115,7 @@ function(object, newdata=NULL, type="decision", ...) {
     }
   }
   
-  y <- newdata %*% x
+  y <- as.vector(newdata %*% x)
   
   if (object@type == 'logistic' && type == 'decision') {
     y <- sign(y)

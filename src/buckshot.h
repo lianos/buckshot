@@ -21,8 +21,12 @@ RcppExport SEXP
 create_shotgun_data_dense(SEXP matrix_, SEXP labels_);
 
 RcppExport SEXP
-create_shotgun_data_csparse(SEXP matrix_, SEXP nnz_, SEXP nrows_, SEXP ncols_,
-                            SEXP labels_);
+create_shotgun_data_csparse(SEXP vals_, SEXP rows_, SEXP cols_, 
+                            SEXP nrows_, SEXP ncols_, SEXP labels_);
+
+RcppExport SEXP
+create_shotgun_data_tsparse(SEXP vals_, SEXP rows_, SEXP cols_, 
+                            SEXP nrows_, SEXP ncols_, SEXP labels_);
 
 RcppExport SEXP
 shotgun_data_labels(SEXP prob_);

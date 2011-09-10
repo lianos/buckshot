@@ -3,6 +3,8 @@
 ## ----------------------------------------------------------------------------
 
 setClassUnion("ptrOrNULL", c("externalptr", "NULL"))
+setClassUnion("MatrixLike", c("matrix", "Matrix"))
+
 ##' Base object for Buckshot classes
 setClass("BuckshotObject", contains="VIRTUAL",
          representation=representation(cache="environment"))

@@ -1,8 +1,28 @@
 context("basic tests")
+data(arcene, package="buckshot")
 
-test_that("logistic regression works on arcene data", {
-  data(arcene, package="buckshot")
-  model <- buckshot(A.arcene, y.arcene, 'logistic', lambda=0.166)
-  accuracy <- sum(predict(model, A.arcene) == y.arcene) / length(y.arcene)
-  expect_equal(accuracy, 1)
+test_that("logistic regression on dense data", {
+  suppressWarnings({
+    model <- buckshot(A.arcene, y.arcene, 'logistic', lambda=0.166)
+    bingo <- all(predict(model, A.arcene) == y.arcene)
+  })
+  expect_true(bingo, info="Dense model")
+})
+
+test_that("logistic regression on sparse data", {
+  ms <- Matrix(A.arcene, sparse=TRUE)
+  suppressWarnings({
+    msparse <- buckshot(ms, y.arcene, 'logistic', lambda=0.166)
+    bingo.sparse <- all(predict(msparse, ms) == y.arcene)
+  })
+  expect_true(bingo.sparse, info="Sparse model")
+})  
+
+test_that("warnings emmited when design matrices have all-zero columns", {
+  expect_warning({
+    bd <- BuckshotData(A.arcene, y.arcene)
+  }, "Removing.*?69", info="Warn on building data object")
+  
+  model <- buckshot(bd, lambda=0.166)
+  expect_warning(predict(model, A.arcene), "remove", info="warn on predict")
 })
