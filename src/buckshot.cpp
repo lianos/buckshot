@@ -49,72 +49,6 @@ END_RCPP
 }
 
 SEXP
-create_shotgun_data_csparse(SEXP vals_, SEXP rows_, SEXP cols_, SEXP nrows_,
-                            SEXP ncols_, SEXP labels_) {
-BEGIN_RCPP
-    throw std::runtime_error("Use TsparseMatrix instead");
-    Rcpp::NumericVector vals(vals_);
-    Rcpp::IntegerVector rows(rows_);
-    Rcpp::IntegerVector cols(cols_);
-    int nrows = Rcpp::as<int>(nrows_);
-    int ncols = Rcpp::as<int>(ncols_);
-    Rcpp::NumericVector labels(labels_);
-    int nnz = vals.size();
-    int nnz_out = 0;
-    
-    SEXP ptr;
-    Rcpp::List out;
-    
-    shotgun_data *prob = new shotgun_data;
-    prob->A_rows.resize(nrows);
-    prob->A_cols.resize(ncols);
-    prob->y.resize(nrows);
-    prob->nx = ncols;
-    prob->ny = nrows;
-    
-    int prevrow = -1;
-    int row;
-    int colidx = 0;
-    int col = cols[0];
-    double val;
-    
-    Rprintf("nnz: %d\n", nnz);
-    
-    for (int i = 0; i < nnz; i++) {
-        row = rows[i];
-        val = vals[i];
-        if (row < prevrow) {
-            while (col == cols[colidx]) {
-                // Guard against all-zero rows (shouldn't happen)
-                // Rprintf("col, colidx, cols[colidx] : %d %d %d\n",
-                //         col, colidx, cols[colidx]);
-                colidx++;
-            }
-            col = colidx;
-            Rprintf("  col: %d, i: %d\n", col, i);
-        }
-        prob->A_cols[col].add(row, val);
-        prob->A_rows[row].add(col, val);
-        nnz_out++;
-        prevrow = row;
-    }
-    
-    for (int i = 0; i < nrows; i++) {
-        prob->y[i] = labels[i];
-    }
-    
-    ptr = R_MakeExternalPtr(prob, R_NilValue, R_NilValue);
-    R_RegisterCFinalizer(ptr, shotgun_data_finalizer);
-    
-    out = Rcpp::List::create(
-      Rcpp::Named("nnz") = Rcpp::wrap(nnz_out),
-      Rcpp::Named("ptr") = ptr);
-    
-    return out;
-END_RCPP
-}
-
-SEXP
 create_shotgun_data_tsparse(SEXP vals_, SEXP rows_, SEXP cols_, SEXP nrows_,
                             SEXP ncols_, SEXP labels_) {
 BEGIN_RCPP
@@ -149,6 +83,71 @@ BEGIN_RCPP
         prob->A_cols[col].add(row, val);
         prob->A_rows[row].add(col, val);
         nnz_out++;
+    }
+    
+    for (int i = 0; i < nrows; i++) {
+        prob->y[i] = labels[i];
+    }
+    
+    ptr = R_MakeExternalPtr(prob, R_NilValue, R_NilValue);
+    R_RegisterCFinalizer(ptr, shotgun_data_finalizer);
+    
+    out = Rcpp::List::create(
+      Rcpp::Named("nnz") = Rcpp::wrap(nnz_out),
+      Rcpp::Named("ptr") = ptr);
+    
+    return out;
+END_RCPP
+}
+
+SEXP
+create_shotgun_data_csparse(SEXP vals_, SEXP rows_, SEXP cols_, SEXP nrows_,
+                            SEXP ncols_, SEXP labels_) {
+BEGIN_RCPP
+    throw std::runtime_error("Use TsparseMatrix instead");
+    Rcpp::NumericVector vals(vals_);
+    Rcpp::IntegerVector rows(rows_);
+    Rcpp::IntegerVector cols(cols_);
+    int nrows = Rcpp::as<int>(nrows_);
+    int ncols = Rcpp::as<int>(ncols_);
+    Rcpp::NumericVector labels(labels_);
+    int nnz = vals.size();
+    int nnz_out = 0;
+    
+    SEXP ptr;
+    Rcpp::List out;
+    
+    shotgun_data *prob = new shotgun_data;
+    prob->A_rows.resize(nrows);
+    prob->A_cols.resize(ncols);
+    prob->y.resize(nrows);
+    prob->nx = ncols;
+    prob->ny = nrows;
+    
+    int prevrow = -1;
+    int row;
+    int colidx = 0;
+    int col = cols[0];
+    double val;
+    
+    // There is a smarter way to do this that you are not thinking about
+    for (int i = 0; i < nnz; i++) {
+        row = rows[i];
+        val = vals[i];
+        if (row < prevrow) {
+            while (col == cols[colidx]) {
+                // Guard against all-zero rows (shouldn't happen)
+                // Rprintf("col, colidx, cols[colidx] : %d %d %d\n",
+                //         col, colidx, cols[colidx]);
+                colidx++;
+            }
+            col = colidx;
+            Rprintf("  col: %d, i: %d\n", col, i);
+        }
+        prob->A_cols[col].add(row, val);
+        prob->A_rows[row].add(col, val);
+        nnz_out++;
+        prevrow = row;
     }
     
     for (int i = 0; i < nrows; i++) {

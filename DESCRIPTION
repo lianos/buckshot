@@ -1,19 +1,22 @@
 Package: buckshot
 Type: Package
-Title: S4 interface to "shotgun", a C++ parallel lasso and sparse logistic
+Title: An interface to "shotgun", a C++ parallel lasso and sparse logistic
   regression solver
 Version: 0.1
 Author: Steve Lianoglou
 Maintainer: Steve Lianoglou <slianoglou@gmail.com>
-Description: This package provides an R (S4) interface to "shotgun", the
+Description: This package provides an interface to "shotgun", the
   (large-scale) parallel coordinate decent solver for lasso and sparse
-  logistic regression written in C++.
+  logistic regression written in C++. Sparse design matrices are supported
+  via the Matrix package.
   .
-  The shotgun C++ library made its debut at ICML 2011 and is developed
-  by Aapo Kyrola, Joseph Bradley, Danny Bickson, and Carlos Guestrin in
-  the SELECT lab at CMU. See the URLs for further references.
+  The shotgun C++ library is developed in the SELECT Lab at CMU by
+  Aapo Kyrola, Joseph Bradley, Danny Bickson, and Carlos Guestrin. See
+  their ICML 2011 paper and its home page for more information (links listed
+  in URLs below)
   .
-  WARNING: This package only runs on linux and OS X x86_64 bit architectures
+  NOTE: This package only runs on x86_64 bit architectures and probably does
+  not work on Windows.
 License: Apache-2
 LazyLoad: yes
 Depends: R (>= 2.13.0), Rcpp (>= 0.9.6), Matrix

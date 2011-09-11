@@ -7,8 +7,13 @@ This package provides an R (S4) interface to "shotgun", the (large-scale)
 parallel coordinate decent solver for lasso and sparse logistic regression
 written in C++
 
-Shotgun is developed by Aapo Kyrola, Joseph Bradley Danny Bickson, and
-Carlos Guestrin in the SELECT lab at CMU.
+See the buckshot wiki for a quick installation and usage instructions:
+
+  https://github.com/lianos/buckshot/wiki
+
+
+Shotgun is developed in the SELECT Lab at CMU by Aapo Kyrola, Joseph Bradley,
+Danny Bickson, and Carlos Guestrin.
 
 For more information about the shotgun solver, please see: 
   
@@ -16,14 +21,9 @@ For more information about the shotgun solver, please see:
   Shotgun ICML 2011 Paper: http://arxiv.org/abs/1105.5379
   SELECT Lab People: http://select.cs.cmu.edu/people/index.html
 
-See the buckshot wiki for a quick overview:
-
-  https://github.com/lianos/buckshot/wiki
-
 The buckshot library is neither endorsed or supported by the authors of the
 shotgun library.
 
-buckshot is released under the Apache 2 License, which is the same license the
-shotgun library is released under. It should go without saying, but buckshot is
-provided AS IS and with NO WARRANTY.
+Buckshot is released under the Apache 2 License, the same license used for
+the shotgun library. Buckshot is provided AS IS and with NO WARRANTY.
 

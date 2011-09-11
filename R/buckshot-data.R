@@ -51,6 +51,9 @@ preprocess.xy <- function(x, y) {
   if (!is.numeric(x[1L])) {
     stop("Only numeric data is supported")
   }
+  if (any(is.na(x)) || any(is.na(y))) {
+    stop("NA values not supported")
+  }
   if (!is.matrix(x) && !inherits(x, 'Matrix')) {
     stop("x needs to be a matrix (or Matrix)")
   }
@@ -87,7 +90,7 @@ function(x, y, ...) {
 
 setMethod("BuckshotData", c(x="TsparseMatrix"),
 function(x, y, ...) {
-  dat <- preprocess.xy(x, y)  
+  dat <- preprocess.xy(x, y)
   ret <- .Call("create_shotgun_data_tsparse", as.numeric(dat$x@x),
                dat$x@i, dat$x@j, nrow(dat$x), ncol(dat$x), dat$y,
                PACKAGE="buckshot")
@@ -99,16 +102,12 @@ setMethod("BuckshotData", c(x="CsparseMatrix"),
 function(x, y, ...) {
   return(BuckshotData(as(x, "TsparseMatrix"), y, ...))
   
-  ## TODO: Figure out how to properly index CsparseMatrix in order to skip copy
-  validate.xy(x, y)
-  
-  rm.cols <- which(colSums(x) == 0)
-  if (length(rm.cols) > 0L) {
-    x <- x[, -rm.cols]
-  }
-  
-  vals <- as.numeric(x@x)
-  y <- as.numeric(y)
+  ## TODO: Figure out how to properly index CsparseMatrix in order to
+  ##       making a copy of the "default" sparse matrix type in the Matrix
+  ##       package.
+  dat <- preprocess.xy(x, y)
+  x <- dat$x
+  y <- dat$y
   
   ## x@x : The non-zero values of the matrix, column order
   ## x@p : 0-based-index position of the *first* element the n-th column
@@ -119,7 +118,8 @@ function(x, y, ...) {
   
   ret <- .Call("create_shotgun_data_csparse", as.numeric(x@x), x@i, x@p,
                nrow(x), ncol(x), y, PACKAGE="buckshot")
-  new("BuckshotData", ptr=ret$ptr, dim=dim(x), nnz=ret$nnz, rm.cols=rm.cols)
+  new("BuckshotData", ptr=ret$ptr, dim=dim(dat$x), nnz=ret$nnz,
+      rm.cols=dat$rm.cols)
 })
 
 # setMethod("BuckshotData", c(x="sparseMatrix"),

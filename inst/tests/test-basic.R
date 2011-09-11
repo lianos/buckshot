@@ -12,10 +12,10 @@ test_that("logistic regression on dense data", {
 test_that("logistic regression on sparse data", {
   ms <- Matrix(A.arcene, sparse=TRUE)
   suppressWarnings({
-    msparse <- buckshot(ms, y.arcene, 'logistic', lambda=0.166)
-    bingo.sparse <- all(predict(msparse, ms) == y.arcene)
+    model <- buckshot(ms, y.arcene, 'logistic', lambda=0.166)
+    bingo <- all(predict(model, ms) == y.arcene)
   })
-  expect_true(bingo.sparse, info="Sparse model")
+  expect_true(bingo, info="Sparse model")
 })  
 
 test_that("warnings emmited when design matrices have all-zero columns", {
