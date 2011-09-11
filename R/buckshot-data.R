@@ -101,6 +101,9 @@ function(x, y, ...) {
 
 setMethod("BuckshotData", c(x="CsparseMatrix"),
 function(x, y, ...) {
+  ## TODO: implement BuckshotData,CsparseMatrix -- a TsparseMatrix
+  ## will have to be converted to a CsparseMatrix in the predict function
+  ## anyway.
   return(BuckshotData(as(x, "TsparseMatrix"), y, ...))
   
   ## TODO: Figure out how to properly index CsparseMatrix in order to
@@ -130,6 +133,7 @@ function(x, y, ...) {
 
 setMethod("designMatrix", c(x="BuckshotData"),
 function(x, ...) {
+  ## TODO: Return a CsparseMatrix matrix designMatrx,BuckshotData
   ret <- .Call("shotgun_design_matrix", x@ptr, PACKAGE="buckshot")
   new("dgTMatrix", x=ret$vals, i=ret$rows, j=ret$cols, Dim=dim(x),
       Dimnames=dimnames(x))

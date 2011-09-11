@@ -20,8 +20,6 @@
 #include "assert.h"
 #include <cstdlib>
 
-#include "R.h"
-
 #ifndef _CAS_ARRAY_
 #define _CAS_ARRAY_
 
@@ -86,7 +84,6 @@ class cas_array {
     // Borrowed from Guy Blelloch
     inline bool CAS(long *ptr, long oldv, long newv) {
       unsigned char ret;
-      
       #if __x86_64__
       /* Note that sete sets a 'byte' not the word */
       __asm__ __volatile__ (
@@ -115,7 +112,7 @@ class cas_array {
             prev = arr[idx];
             oldval = prev;
             newval = prev*fact;
-            assert(!isNaN(newval));
+            assert(!isnan(newval));
         } while (!CAS(reinterpret_cast<long *>(&arr[idx]), *reinterpret_cast<volatile long *>(&prev), *reinterpret_cast<volatile long*>(&newval)));
     }
     
@@ -135,7 +132,24 @@ class cas_array {
             newval = prev + delta;
         } while (!CAS(reinterpret_cast<long *>(&arr[idx]), *reinterpret_cast<volatile long *>(&prev), *reinterpret_cast<volatile long*>(&newval)));
     }
-    
+
+   void max(int idx, double delta) {
+         assert(idx<len);
+         #ifdef PADDED_ARRAY
+         idx <<= 3;
+         #endif
+        volatile double prev;
+        volatile double newval;
+        volatile double oldval;
+        do {
+            prev = arr[idx];
+            oldval = prev;
+            newval = std::max((double)prev , delta);
+        } while (!CAS(reinterpret_cast<long *>(&arr[idx]), *reinterpret_cast<volatile long *>(&prev), *reinterpret_cast<volatile long*>(&newval)));
+    }
+
+
+      
 };
 
 #endif

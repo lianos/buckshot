@@ -115,6 +115,10 @@ function(object, newdata=NULL, type="decision", ...) {
     }
   }
   
+  if (inherits(newdata, "TsparseMatrix")) {
+    newdata <- as(newdata, "CsparseMatrix")
+  }
+  
   y <- as.vector(newdata %*% x)
   
   if (object@type == 'logistic' && type == 'decision') {

@@ -2,7 +2,6 @@
 ## Classes
 ## ----------------------------------------------------------------------------
 
-setClassUnion("ptrOrNULL", c("externalptr", "NULL"))
 setClassUnion("MatrixLike", c("matrix", "Matrix"))
 
 ##' Base object for Buckshot classes
@@ -17,17 +16,22 @@ function(.Object, ..., cache=new.env()) {
 ##' (sparse) design matrix and labels in a struct.
 setClass("BuckshotData", contains="BuckshotObject",
          representation=representation(
-           ptr="ptrOrNULL",
+           ptr="externalptr",
            dim="integer",
            dimnames="list",
            nnz="integer",
            rm.cols="integer"),
          prototype=prototype(
-           ptr=NULL,
            dim=integer(),
            dimnames=list(NULL, NULL),
            nnz=0L,
-           rm.cols=integer()))
+           rm.cols=integer()),
+        validity=function(object) {
+          if (is.null(object@ptr)) {
+            return("data pointer is not set")
+          }
+          TRUE
+        })
 
 ##' A trained Buckshot model
 ##' 

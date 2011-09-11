@@ -23,7 +23,6 @@
 #ifndef __SHOTGUN_COMMON_
 #define __SHOTGUN_COMMON_
 
-
 #include <cmath>
 #include <iostream>
 #include <memory.h>
@@ -45,13 +44,10 @@
 #include <omp.h>
 #endif 
 
-// #ifdef __DARWIN__
-// cout << "defining\n";
-// #define isnan(_a) (std::isnan(_a))
-// #endif
-
-#define isNaN(_a) (std::isnan(_a))
-
+#ifdef __APPLE__
+// See: http://stackoverflow.com/questions/570669
+#define isnan(_a) (_a != _a)
+#endif
 #include "cas_array.h" // Concurrent array
 
 typedef double valuetype_t;
@@ -102,6 +98,7 @@ struct shotgun_data {
     // Lookup tables for optimization
     cas_array<valuetype_t> Ax;
     cas_array<valuetype_t> expAx;
+    cas_array<double> Gmax;
 };
 
 void convert_2_mat(const char * filename, shotgun_data * prob);

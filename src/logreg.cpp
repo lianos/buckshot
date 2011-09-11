@@ -26,7 +26,7 @@
 // 
  
 #include "common.h"
-#include "Rcpp.h"
+
 
 shotgun_data * logregprob;
 
@@ -66,12 +66,12 @@ inline void logreg_cdn_derivandH(double lambda, int x_i, double &G, double& H) {
        int rowi = col.idxs[i];
        double val = col.values[i];
  
-				double exp_wTxind = logregprob->expAx[rowi];
-				double tmp1 = val/(1+exp_wTxind);
-				double tmp2 =  tmp1;
-				double tmp3 = tmp2*exp_wTxind;
-				G += tmp2;
-				H += tmp1*tmp3;
+       double exp_wTxind = logregprob->expAx[rowi];
+	double tmp1 = val/(1+exp_wTxind);
+	double tmp2 =  tmp1;
+	double tmp3 = tmp2*exp_wTxind;
+	G += tmp2;
+	H += tmp1*tmp3;
     }
     G = -G +  xjneg[x_i];
     G /= lambda;
@@ -99,7 +99,7 @@ inline double logreg_cdn_Ldiff(double lambda, int x_i, double diff) {
        //assert(!isnan(ds));
        sum +=  ds;
     } 
-    if (isNaN(sum)){
+    if (isnan(sum)){
         fprintf(stderr, "Got numerical error: please verify that in your dataset there are no columns of matrix A with all zeros. Encountered error in column %d\n", x_i);
         exit(1);
     }
@@ -119,6 +119,8 @@ void initialize_all() {
     logregprob->x.resize(logregprob->nx);
     logregprob->Ax.resize(logregprob->ny);
     logregprob->expAx.resize(logregprob->ny);
+    logregprob->Gmax.resize(1);
+
     active = (bool *) calloc(logregprob->nx,sizeof(bool));
     xjneg = (double *) calloc(logregprob->nx,sizeof(double));
     pos_y = 0;
@@ -182,13 +184,14 @@ double shoot_cdn(int x_i, double lambda) {
             return 0.0;
         }   
     } else if(xv > 0)
-				violation = fabs(Gp);
-			else
-				violation = fabs(Gn);
+      violation = fabs(Gp);
+    else
+      violation = fabs(Gn);
     
     // TODO: should use a reduction here! Or lock.
-    if (Gmax < violation)
-        Gmax = violation;
+    //if (Gmax < violation)
+    //    Gmax = violation;
+    logregprob->Gmax.max(0, violation);
 
     // Newton direction d
     double rhs = Ldd0*xv;
@@ -219,7 +222,7 @@ double shoot_cdn(int x_i, double lambda) {
             // Found ok.
             logregprob->x[x_i] += d;
             // Update dot products (Ax)
-            sparse_array col = logregprob->A_cols[x_i];
+            sparse_array &col = logregprob->A_cols[x_i];
             #pragma omp parallel for
             for(int i=0; i<col.length(); i++) {
                 logregprob->expAx.mul(col.idxs[i], exp(d * col.values[i]));
@@ -289,7 +292,7 @@ void compute_logreg(shotgun_data * prob, double lambda, double term_threshold, i
         }
             
         /* Gmax handling */
-        Gmax_old = Gmax;
+        Gmax_old = logregprob->Gmax[0];
         if (iterations == 0) {
             Gmax_init = Gmax_old;
         }
@@ -313,7 +316,7 @@ void compute_logreg(shotgun_data * prob, double lambda, double term_threshold, i
             }
         }
         
-        if (Gmax <= term_threshold*Gmax_init) {
+        if (logregprob->Gmax[0] <= term_threshold*Gmax_init) {
            // std::cout << active_size << std::endl;
             if (active_size == logregprob->nx) {
                 printf("Encountered all zero solution! try to decrease lambda\n");
