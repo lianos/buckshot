@@ -11,8 +11,9 @@ Replacing the current shotgun sources is relatively straight forward.
       * logreg.cpp
       * shared.cpp
 
-(2) Modify the `inline bool CAS` function in cas_array.h in order to check if it
-    is being compiled on x84_64 architecture. If not, return a "graceful" error:
+(2) Modify the `inline bool CAS` function in cas_array.h in order to check if
+    it is being compiled on x84_64 architecture. If not, return a "graceful"
+    runtime error that still allows R to compile the package:
 
         inline bool CAS(long *ptr, long oldv, long newv) {
           unsigned char ret;

@@ -20,7 +20,7 @@ function(x, data=NULL, type='lasso', ..., na.action=na.omit, scaled=TRUE) {
 
 setMethod("buckshot", c(x="MatrixLike"),
 function(x, y, type='lasso', na.action=na.omit, scaled=TRUE, ...) {
-  type <- buckshot:::matchLearningAlgo(type)
+  type <- matchLearningAlgo(type)
   if (missing(y)) {
     stop("labels `y` required")
   }

@@ -8,14 +8,5 @@
       ">>>>     Perhaps you can try the glmnet package for your needs.       <<<<\n",
       ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n")
   }
-  
-  ## First call to X %*% b acts weird in X is a TsparseMatrix, so let's fire
-  ## one off here.
-  # M <- Matrix(1:20, 5, sparse=TRUE)
-  # M[sample(20, 5)] <- 0
-  # M <- as(M, 'dgTMatrix')
-  # suppressMessages(M %*% 1:ncol(M))
-  # 
-  # options(Matrix.verbose=10)
   invisible(NULL)
 }
