@@ -19,11 +19,13 @@ setClass("BuckshotData", contains="BuckshotObject",
          representation=representation(
            ptr="ptrOrNULL",
            dim="integer",
+           dimnames="list",
            nnz="integer",
            rm.cols="integer"),
          prototype=prototype(
            ptr=NULL,
            dim=integer(),
+           dimnames=list(NULL, NULL),
            nnz=0L,
            rm.cols=integer()))
 

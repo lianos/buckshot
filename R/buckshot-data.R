@@ -79,8 +79,9 @@ function(x, y, scaled=TRUE, ...) {
   dat <- preprocess.xy(x, y)
   storage.mode(dat$x) <- 'numeric'
   ret <- .Call("create_shotgun_data_dense", dat$x, dat$y, PACKAGE="buckshot")
-  new("BuckshotData", ptr=ret$ptr, dim=dim(dat$x), nnz=ret$nnz,
-      rm.cols=dat$rm.cols)
+  new("BuckshotData", ptr=ret$ptr, dim=dim(dat$x),
+      dimnames=list(rownames(dat$x), colnames(dat$x)),
+      nnz=ret$nnz, rm.cols=dat$rm.cols)
 })
 
 setMethod("BuckshotData", c(x="Matrix"),
@@ -94,8 +95,8 @@ function(x, y, ...) {
   ret <- .Call("create_shotgun_data_tsparse", as.numeric(dat$x@x),
                dat$x@i, dat$x@j, nrow(dat$x), ncol(dat$x), dat$y,
                PACKAGE="buckshot")
-  new("BuckshotData", ptr=ret$ptr, dim=dim(x), nnz=ret$nnz,
-      rm.cols=dat$rm.cols)
+  new("BuckshotData", ptr=ret$ptr, dim=dim(x), dimnames=dimnames(dat$x),
+      nnz=ret$nnz, rm.cols=dat$rm.cols)
 })
 
 setMethod("BuckshotData", c(x="CsparseMatrix"),
@@ -118,8 +119,8 @@ function(x, y, ...) {
   
   ret <- .Call("create_shotgun_data_csparse", as.numeric(x@x), x@i, x@p,
                nrow(x), ncol(x), y, PACKAGE="buckshot")
-  new("BuckshotData", ptr=ret$ptr, dim=dim(dat$x), nnz=ret$nnz,
-      rm.cols=dat$rm.cols)
+  new("BuckshotData", ptr=ret$ptr, dim=dim(dat$x), dimnames=dimnames(dat$x),
+      nnz=ret$nnz, rm.cols=dat$rm.cols)
 })
 
 # setMethod("BuckshotData", c(x="sparseMatrix"),
@@ -129,8 +130,9 @@ function(x, y, ...) {
 
 setMethod("designMatrix", c(x="BuckshotData"),
 function(x, ...) {
-  stop("Reconstructing designMatrix not supported yet")
   ret <- .Call("shotgun_design_matrix", x@ptr, PACKAGE="buckshot")
+  new("dgTMatrix", x=ret$vals, i=ret$rows, j=ret$cols, Dim=dim(x),
+      Dimnames=dimnames(x))
 })
 
 setMethod("labels", c(object="BuckshotData"),

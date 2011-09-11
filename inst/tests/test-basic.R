@@ -26,3 +26,18 @@ test_that("warnings emmited when design matrices have all-zero columns", {
   model <- buckshot(bd, lambda=0.166)
   expect_warning(predict(model, A.arcene), "remove", info="warn on predict")
 })
+
+test_that("design matrix reconstruction works from BuckshotData", {
+  m <- matrix(sample(100), 10)
+  colnames(m) <- sample(letters[1:10], )
+  m[sample(100, 30)] <- 0
+  y <- sample(c(-1, 1), nrow(m), replace=TRUE)
+  M <- Matrix(m, sparse=TRUE)
+  
+  xy <- buckshot:::preprocess.xy(M, y)
+  
+  bd <- BuckshotData(xy$x, xy$y)
+  re.x <- designMatrix(bd)
+  
+  expect_identical(as.matrix(re.x), as.matrix(xy$x))
+})

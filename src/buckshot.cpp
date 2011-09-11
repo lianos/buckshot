@@ -173,8 +173,28 @@ shotgun_data_labels(SEXP prob_) {
 
 SEXP
 shotgun_design_matrix(SEXP prob_) {
+    std::vector<int> rows;
+    std::vector<int> cols;
+    std::vector<double> vals;
+    SEXP out;
+    int nelem;
     shotgun_data *prob = (shotgun_data*) R_ExternalPtrAddr(prob_);
-    return R_NilValue;
+    
+    //idx, values
+    for (int i = 0; i < prob->nx; i++) {
+        nelem = prob->A_cols[i].idxs.size();
+        for (int j = 0; j < nelem; j++) {
+            cols.push_back(i);
+            rows.push_back(prob->A_cols[i].idxs[j]);
+            vals.push_back(prob->A_cols[i].values[j]);
+        }
+    }
+    
+    out = Rcpp::List::create(
+      Rcpp::Named("rows") = Rcpp::wrap(rows),
+      Rcpp::Named("cols") = Rcpp::wrap(cols),
+      Rcpp::Named("vals") = Rcpp::wrap(vals));
+    return out;
 }
 
 SEXP
