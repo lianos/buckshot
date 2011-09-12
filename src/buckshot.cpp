@@ -180,7 +180,6 @@ shotgun_design_matrix(SEXP prob_) {
     int nelem;
     shotgun_data *prob = (shotgun_data*) R_ExternalPtrAddr(prob_);
     
-    //idx, values
     for (int i = 0; i < prob->nx; i++) {
         nelem = prob->A_cols[i].idxs.size();
         for (int j = 0; j < nelem; j++) {

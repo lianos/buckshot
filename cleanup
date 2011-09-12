@@ -2,6 +2,7 @@
 
 ## Remove compiled C/C++ stuffs
 ## for o in `find src -name "*.o"`; do rm $o; done
+## 
 ## &> redirects error
 
 rm src/*.o &> /dev/null
