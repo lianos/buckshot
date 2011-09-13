@@ -13,7 +13,7 @@ extern "C" {
  * This function is run on the pointer to the shotgun_data object stored
  * in a BuckshotData@ptr slot when the BuckshotData object is GC'd on
  * the R side
- */.
+ */
 static void shotgun_data_finalizer(SEXP sptr) {
     // Rprintf("deleting shotgun_data pointer\n");
     shotgun_data *ptr = (shotgun_data *) R_ExternalPtrAddr(sptr);

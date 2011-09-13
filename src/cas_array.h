@@ -80,23 +80,27 @@ class cas_array {
         return arr[idx];
     }
     
-     
+    
     // Borrowed from Guy Blelloch
+    // inline bool CAS(long *ptr, long oldv, long newv) {
+    //   unsigned char ret;
+    //   #if __x86_64__
+    //   /* Note that sete sets a 'byte' not the word */
+    //   __asm__ __volatile__ (
+    //                 "  lock\n"
+    //                 "  cmpxchgq %2,%1\n"
+    //                 "  sete %0\n"
+    //                 : "=q" (ret), "=m" (*ptr)
+    //                 : "r" (newv), "m" (*ptr), "a" (oldv)
+    //                 : "memory");
+    //   #else
+    //   Rf_error("The x86_64 architecture is only supported.");
+    //   #endif
+    //   return ret;
+    // }
+    
     inline bool CAS(long *ptr, long oldv, long newv) {
-      unsigned char ret;
-      #if __x86_64__
-      /* Note that sete sets a 'byte' not the word */
-      __asm__ __volatile__ (
-                    "  lock\n"
-                    "  cmpxchgq %2,%1\n"
-                    "  sete %0\n"
-                    : "=q" (ret), "=m" (*ptr)
-                    : "r" (newv), "m" (*ptr), "a" (oldv)
-                    : "memory");
-      #else
-      Rf_error("The x86_64 architecture is only supported.");
-      #endif
-      return ret;
+      return __sync_bool_compare_and_swap(ptr, oldv, newv);
     }
     
         

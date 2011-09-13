@@ -14,7 +14,7 @@ read.matrix.mart <- function(mtx.file, as.sparse=TRUE, use.c=FALSE) {
   stopifnot(file.exists(mtx.file))
   
   if (use.c) {
-    stop("TODO: Need to fix memory not mapped errors when reading banner")
+    # stop("TODO: Need to fix memory not mapped errors when reading banner")
     ret <- .Call("read_matrix_market", mtx.file, as.sparse, PACKAGE="buckshot")
     nr <- ret$nrows
     nc <- ret$ncols
@@ -27,12 +27,12 @@ read.matrix.mart <- function(mtx.file, as.sparse=TRUE, use.c=FALSE) {
     nr <- mtx[1,1]
     nc <- mtx[1,2]
     nnz <- mtx[1,3]
-    rows <- mtx[, 1]
-    cols <- mtx[, 2]
-    vals <- mtx[, 3]
+    mtx <- mtx[-1, ]
+    rows <- mtx[, 1] - 1L
+    cols <- mtx[, 2] - 1L
+    vals <- as.numeric(mtx[, 3])
   }
-  
-  m <- matrix(0, nrow=nr, ncol=nc)
-  m[mtx[,1] * mtx[,2]] <- mtx[,3]
-  m
+
+  out <- new("dgTMatrix", x=vals, i=rows, j=cols, Dim=c(nr, nc))
+  out
 }

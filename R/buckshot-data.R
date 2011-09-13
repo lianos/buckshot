@@ -57,8 +57,19 @@ preprocess.xy <- function(x, y) {
   if (!is.matrix(x) && !inherits(x, 'Matrix')) {
     stop("x needs to be a matrix (or Matrix)")
   }
-  if (missing(y) || !is.numeric(y)) {
-    stop("Numberic labels (y) are required")
+  
+  ## y
+  if (missing(y)) {
+    stop("Numeric labels (y) are required")
+  }
+  if (is.matrix(y)) {
+    dim(y) <- NULL
+  }
+  if (inherits(y, 'Matrix')) {
+    y <- as.numeric(y)
+  }
+  if (!is.numeric(y)) {
+    stop("Numeric labels (y) are required")
   }
   if (nrow(x) != length(y)) {
     stop("Number of labels != number of observations")
