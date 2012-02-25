@@ -36,3 +36,19 @@ read.matrix.mart <- function(mtx.file, as.sparse=TRUE, use.c=FALSE) {
   out <- new("dgTMatrix", x=vals, i=rows, j=cols, Dim=c(nr, nc))
   out
 }
+
+write.matrix.mart <- function(x, file.name) {
+  idxs <- which(x != 0, arr.ind=TRUE)
+  outfile <- file(file.name, 'w')
+  i <- 1
+  N <- nrow(idxs)
+  cat("%%MatrixMarket matrix coordinate real general\n", file=outfile)
+  cat(sprintf("%d %d %d\n", nrow(x), ncol(x), nrow(idxs)), file=outfile)
+  while (i <= N) {
+    row <- idxs[i,1]
+    col <- idxs[i,2]
+    cat(sprintf("%d %d  %f\n", row, col, x[row,col]), file=outfile)
+    i <- i + 1
+  }
+  close(outfile)
+}

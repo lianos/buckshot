@@ -23,6 +23,7 @@ Depends: R (>= 2.13.0), Rcpp (>= 0.9.6), Matrix
 Imports: Rcpp, methods
 Suggests: testthat (>= 0.5), glmnet (>= 1.7), caret (>= 4.91)
 LinkingTo: Rcpp
+OS_type: unix
 URL: http://lianos.github.com/buckshot/,
      http://select.cs.cmu.edu/code/,
      http://arxiv.org/abs/1105.5379

@@ -1,5 +1,5 @@
 .onLoad <- function(lib, pkg) {
-  if (.Platform$r_arch != 'x86_64') {
+  if (.Machine$sizeof.pointer != 8) {
     warning("\n",
       ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n",
       ">>>> Sorry, the shotgun solver will only run on x86_64 architectures. <<<<\n",

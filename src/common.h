@@ -46,7 +46,9 @@
 
 #ifdef __APPLE__
 // See: http://stackoverflow.com/questions/570669
-#define isnan(_a) (_a != _a)
+// #define isnan(_a) (_a != _a)
+// #define isnan(_a) std::isnan
+
 #endif
 #include "cas_array.h" // Concurrent array
 

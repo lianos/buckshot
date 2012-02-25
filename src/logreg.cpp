@@ -99,7 +99,7 @@ inline double logreg_cdn_Ldiff(double lambda, int x_i, double diff) {
        //assert(!isnan(ds));
        sum +=  ds;
     } 
-    if (isnan(sum)){
+    if (std::isnan(sum)){
         fprintf(stderr, "Got numerical error: please verify that in your dataset there are no columns of matrix A with all zeros. Encountered error in column %d\n", x_i);
         exit(1);
     }
