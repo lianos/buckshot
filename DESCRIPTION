@@ -7,7 +7,7 @@ Author: Steve Lianoglou
 Maintainer: Steve Lianoglou <slianoglou@gmail.com>
 Description: This package provides an interface to "shotgun", the
   (large-scale) parallel coordinate decent solver for lasso and sparse
-  logistic regression written in C++. Sparse design matrices are supported
+  logistic regression written in C++. Sparse design matrices are supported 
   via the Matrix package.  The shotgun C++ library is developed in the SELECT Lab at CMU by
   Aapo Kyrola, Joseph Bradley, Danny Bickson, and Carlos Guestrin. See
   their ICML 2011 paper and its home page for more information (links listed
